@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>코켓DJ게임</title>
+    <style>
+        /* 기본 스타일 */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            overflow-x: hidden;
+            font-family: sans-serif;
+            text-align: center;
+            background: url('1.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+        /* 헤더별 다른 반투명 색상 */
+        h1 {
+            margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50px;
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 1.5rem;
+        }
+        .controls > h2 {
+            display: block;
+            margin: 0 auto 15px;
+            background: rgba(255, 235, 59, 0.7);
+            border-radius: 25px;
+            padding: 6px 12px;
+            font-size: 1.3rem;
+        }
+        .effects > h2 {
+            display: block;
+            margin: 0 auto 15px;
+            background: rgba(0, 188, 212, 0.7);
+            border-radius: 25px;
+            padding: 6px 12px;
+            font-size: 1.3rem;
+        }
+        /* Intro 화면 전체 (텍스트만 하단으로 배치) */
+        #intro {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 20vh;
+            z-index: 10;
+        }
+        #intro .intro-content {
+            background: transparent;
+            padding: 0;
+            border-radius: 0;
+            width: 90%;
+            max-width: 320px;
+            box-sizing: border-box;
+        }
+        #intro .intro-content h1,
+        #intro .intro-content p,
+        #intro .intro-content a,
+        #intro .intro-content button {
+            display: block;
+            margin: 8px auto;
+        }
+        #intro .intro-content p {
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+        #intro .intro-content a {
+            color: #333;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        #intro button {
+            margin-top: 12px;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 8px;
+            background-color: #ff6b6b;
+            color: #fff;
+            cursor: pointer;
+            width: auto;
+        }
+        /* 게임 화면 */
+        #game { display: none; padding: 20px 10px; }
+        .controls, .effects { margin: 20px auto; max-width: 100%; }
+        .controls button, .effects button {
+            margin: 5px;
+            padding: 15px 25px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            background-color: #fff;
+            transition: background 0.2s;
+            box-sizing: border-box;
+        }
+        .controls button:hover, .effects button:hover {
+            background-color: #e0e0e0;
+        }
+        .effects #effects-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-auto-rows: 80px;
+            gap: 10px;
+            justify-content: center;
+            max-width: 360px;
+            margin: 0 auto;
+        }
+        .effects #effects-container button {
+            width: 100%; height: 100%;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            word-break: break-word;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+        footer {
+            text-align: center;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            font-size: 0.8rem;
+            box-sizing: border-box;
+        }
+        footer a { color: #333; text-decoration: none; }
+
+        /* 반응형: 4x6 그리드 유지 */
+        @media (max-width: 768px), (max-width: 480px) {
+            h1 { font-size: 1.3rem; }
+            .controls > h2, .effects > h2 { font-size: 1.1rem; padding: 6px 12px; border-radius: 25px; }
+            .controls button, .effects button { padding: 8px 12px; font-size: 0.8rem; margin: 4px; }
+            .effects #effects-container {
+                grid-template-columns: repeat(4, 1fr);
+                grid-auto-rows: 60px;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Intro Screen -->
+    <div id="intro">
+        <div class="intro-content">
+            <h1>❤️ 코켓-비트박스 DJ게임 🚚</h1>
+            <p>❤️ 당신만의 비트 랩을 만드세요 ❤️</p>
+            <p>유튜브 '결코_Gulko' 저작권 콘텐츠입니다.</p>
+            <p>© 2025 코쳇게임즈. All rights reserved.</p>
+            <a href="https://www.youtube.com/@Gulko" target="_blank">https://www.youtube.com/@Gulko</a>
+            <button id="start-btn">게임 시작</button>
+        </div>
+    </div>
+
+    <!-- Main Game UI -->
+    <div id="game">
+        <h1>코켓 비트박스 DJ</h1>
+        <div class="controls">
+            <h2>비트박스 종류</h2>
+            <button id="track1-btn">Track 1 On</button>
+            <button id="track2-btn">Track 2 On</button>
+            <button id="track3-btn">Track 3 On</button>
+        </div>
+        <div class="effects">
+            <h2>효과음</h2>
+            <div id="effects-container"></div>
+        </div>
+        <footer>
+            유튜브 '결코_Gulko' 저작권 콘텐츠입니다.
+            <a href="https://www.youtube.com/@Gulko" target="_blank">https://www.youtube.com/@Gulko</a>
+            <br />© 2025 코쳇게임즈. All rights reserved
+        </footer>
+    </div>
+
+    <script>
+        // Intro → Game 전환
+        document.getElementById('start-btn').addEventListener('click', () => {
+            document.getElementById('intro').style.display = 'none';
+            document.getElementById('game').style.display = 'block';
+        });
+
+        // 루프 트랙 셋업
+        [1, 2, 3].forEach(num => {
+            const audio = new Audio(`${num}.mp3`);
+            audio.loop = true;
+            let playing = false;
+            document.getElementById(`track${num}-btn`).addEventListener('click', () => {
+                playing ? audio.pause() : audio.play();
+                document.getElementById(`track${num}-btn`).textContent = `Track ${num} ${playing ? 'On' : 'Off'}`;
+                playing = !playing;
+            });
+        });
+
+        // 커스텀 레이블 (4~27)
+        const customLabels = [
+            '마쬬','니니니','소리질럿','ㅅㅅㅅㅅ',
+            '웃음','마','샤바라','함치고',
+            '오우예','고객은왕이다','아아쌔쌔','원투원투',
+            '아르헨티나','상관없죠','장래희망','니장래희망걸코가',
+            '망상이','끼르기는태성이','내가','ㅋㅋㅋㅋ',
+            '문수','잘못했는데','니쥬디한번치고','사랑합니다고객님'
+        ];
+        const effectsContainer = document.getElementById('effects-container');
+
+        function fitText(el, minFont = 8) {
+            let fs = parseInt(window.getComputedStyle(el).fontSize);
+            while ((el.scrollWidth > el.clientWidth || el.scrollHeight > el.clientHeight) && fs > minFont) {
+                fs--; el.style.fontSize = fs + 'px';
+            }
+        }
+        customLabels.forEach((label, i) => {
+            const num = i + 4;
+            const btn = document.createElement('button');
+            btn.setAttribute('data-sound', `${num}.mp3`);
+            btn.textContent = label;
+            btn.addEventListener('click', () => new Audio(`${num}.mp3`).play());
+            effectsContainer.appendChild(btn);
+            fitText(btn);
+        });
+    </script>
+</body>
+</html>
